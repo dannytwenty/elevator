@@ -1,0 +1,122 @@
+#include <vector>
+using namespace std;
+vector<int> the_lift(vector<vector<int>>& que, int capacity) {
+	vector<int> res = { 0 };
+	vector<int> inside;
+	bool endyet;
+	int floornum = 0;
+	int direction = 0;  //0上 1下
+	while (true) {
+		endyet = true;
+
+		for (unsigned int i = 0; i < que.size(); i++) {
+			if (!que[i].empty()) {
+				endyet = false;
+				break;
+			}
+		}
+		if (endyet && inside.empty()) {
+			break;
+		}
+
+		//下電梯
+		for (int i = 0; i < inside.size(); i++) {
+			if (inside[i] == floornum) {
+				if (i != inside.size() - 1) {
+					for (unsigned int j = i; j < inside.size() - 1; j++) {
+						inside[j] = inside[j + 1];
+					}
+					inside.pop_back();
+				}
+				else {
+					inside.pop_back();
+				}
+				if (*res.rbegin() != floornum) {
+					res.push_back(floornum);
+				}
+				i--;
+			}
+		}
+
+		if (direction == 0) {
+			for (int i = 0; i < que[floornum].size(); i++) {
+				if ((que[floornum][i] > floornum && floornum != que.size() - 1) || floornum == que.size() - 1) {
+					if (inside.size() < capacity) {
+						inside.push_back(que[floornum][i]);
+						if (i != que[floornum].size() - 1) {
+							for (unsigned int j = i; j < que[floornum].size() - 1; j++) { //移除一元素
+								que[floornum][j] = que[floornum][j + 1];  //繼續
+							}
+							que[floornum].pop_back();    //移完
+						}
+						else {
+							que[floornum].pop_back();
+						}
+						if (*res.rbegin() != floornum) {
+							res.push_back(floornum);
+						}
+						i--;
+					}
+					else {
+						if (*res.rbegin() != floornum) {
+							res.push_back(floornum);
+						}
+					}
+				}
+			}
+		}
+		else {    // 1 向下
+			for (int i = 0; i < que[floornum].size(); i++) {
+				if ((que[floornum][i] < floornum && floornum != 0) || floornum == 0) {
+					if (inside.size() < capacity) {
+						inside.push_back(que[floornum][i]);
+						if (i != que[floornum].size() - 1) {
+							for (unsigned int j = i; j < que[floornum].size() - 1; j++) { //移除一元素
+								que[floornum][j] = que[floornum][j + 1];  //繼續
+							}
+							que[floornum].pop_back();    //移完
+						}
+						else {
+							que[floornum].pop_back();
+						}
+						if (*res.rbegin() != floornum) {
+							res.push_back(floornum);
+						}
+						i--;
+					}
+					else {
+						if (*res.rbegin() != floornum) {
+							res.push_back(floornum);
+						}
+					}
+				}
+			}
+		}
+
+
+		if (direction == 0) {
+			if (floornum < que.size() - 1) {
+				floornum++;
+			}
+			else {
+				floornum--;
+				direction = 1;
+			}
+		}
+		else {
+			if (floornum > 0) {
+				floornum--;
+			}
+			else {
+				floornum++;
+				direction = 0;
+			}
+		}
+
+
+	}
+	if (*res.rbegin() != 0) {
+		res.push_back(0);
+	}
+	return res;
+}
